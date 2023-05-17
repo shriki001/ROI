@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+
+  client:
+    container_name: ROI_UI
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client/src:/usr/app/src
+      - ./client/public:/usr/app/public
+    depends_on:
+      - server
+  
+  server:
+    container_name: ROI_Server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./server/src:/usr/app/src
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo:4.4.8
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+
+volumes:
+  mongo:
+    driver: local
