@@ -23,19 +23,18 @@ console.log(`connect to ${dbURI}`);
   }
   const companyCount = await db.collection("CompaniesData").countDocuments();
   if (companyCount === 0) {
-    fs.readdirSync("./mongoData/performance/countries/").forEach(
-      async (file) => {
-        const company = file.split(".json")[0];
-        const companyID = company.split("_")[1];
-        const companyFile = fs.readFileSync(
-          `./mongoData/performance/countries/${file}`
-        );
-        const companyDataToShow = JSON.parse(companyFile);
-        companyDataToShow.forEach((company) => (company.company_id = companyID));
-        console.log(`seed ${file}`);
-        await db.collection("CompaniesData").insertMany(companyDataToShow);
-      }
-    );
+    const files = fs.readdirSync("./mongoData/performance/countries/");
+    for (const file of files) {
+      const company = file.split(".json")[0];
+      const companyID = company.split("_")[1];
+      const companyFile = fs.readFileSync(
+        `./mongoData/performance/countries/${file}`
+      );
+      const companyDataToShow = JSON.parse(companyFile);
+      companyDataToShow.forEach((company) => (company.company_id = companyID));
+      console.log(`seed ${file}`);
+      await db.collection("CompaniesData").insertMany(companyDataToShow);
+    }
   }
   console.log("done seed");
   process.exit(0);
